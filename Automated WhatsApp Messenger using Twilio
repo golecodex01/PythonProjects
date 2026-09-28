@@ -1,0 +1,161 @@
+
+# ============================================ 
+# Automated WhatsApp Messenger using Twilio 
+# ============================================ 
+ 
+from twilio.rest import Client 
+from datetime import datetime 
+import time 
+ 
+ 
+# ============================================ 
+# STEP 1: Twilio Credentials 
+# ============================================ 
+ 
+account_sid = "YACedfe54066d61e7ee7b94fdd50875071f" 
+auth_token = "b3985dc8128a451316e42800d026d25e" 
+ 
+# Your Twilio WhatsApp number 
+ 
+twilio_whatsapp_number = "whatsapp:+17372508034" 
+client = Client(account_sid, auth_token) 
+ 
+ 
+# ============================================ 
+# STEP 2: Function to Send WhatsApp Message 
+# ============================================ 
+ 
+def send_whatsapp_message(recipient_number, message_body): 
+ 
+    try: 
+        message = client.messages.create( 
+            from_=twilio_whatsapp_number, 
+            body=message_body, 
+            to=f"whatsapp:{recipient_number}" 
+        ) 
+ 
+        print("\nMessage sent successfully!") 
+        print(f"Message SID: {message.sid}") 
+ 
+    except Exception as e: 
+        print("\nAn error occurred while sending the message.") 
+        print(f"Error: {e}") 
+ 
+ 
+# ============================================ 
+# STEP 3: Get User Input 
+# ============================================ 
+ 
+print("============================================") 
+print("     AUTOMATED WHATSAPP MESSENGER") 
+print("============================================\n") 
+ 
+name = input("Enter the recipient name: ") 
+ 
+recipient_number = input( 
+    "Enter the recipient WhatsApp number with country code " 
+    "(Example: +919876543210): " 
+) 
+ 
+message_body = input( 
+    f"Enter the message you want to send to {name}: " 
+) 
+ 
+ 
+# ============================================ 
+# STEP 4: Get Date and Time 
+# ============================================ 
+ 
+print("\nEnter the date and time when you want to send the message.") 
+ 
+date_str = input( 
+    "Enter date (YYYY-MM-DD): " 
+) 
+ 
+time_str = input( 
+    "Enter time (HH:MM in 24-hour format): " 
+) 
+ 
+ 
+# ============================================ 
+# STEP 5: Convert Input into DateTime 
+# ============================================ 
+ 
+try: 
+ 
+    schedule_datetime = datetime.strptime( 
+        f"{date_str} {time_str}", 
+        "%Y-%m-%d %H:%M" 
+    ) 
+ 
+except ValueError: 
+ 
+    print("\nInvalid date or time format!") 
+    print("Please use:") 
+    print("Date: YYYY-MM-DD") 
+    print("Time: HH:MM") 
+ 
+    exit() 
+ 
+ 
+# ============================================ 
+# STEP 6: Get Current Date and Time 
+# ============================================ 
+ 
+current_datetime = datetime.now() 
+ 
+ 
+# ============================================ 
+# STEP 7: Calculate Delay 
+# ============================================ 
+ 
+time_difference = schedule_datetime - current_datetime 
+ 
+delay_seconds = time_difference.total_seconds() 
+ 
+ 
+# ============================================ 
+# STEP 8: Check Whether Time is in the Future 
+# ============================================ 
+ 
+if delay_seconds <= 0: 
+ 
+    print("\nThe specified time is in the past.") 
+    print("Please enter a future date and time.") 
+ 
+else: 
+ 
+    print("\n============================================") 
+    print("           MESSAGE SCHEDULED") 
+    print("============================================") 
+ 
+    print( 
+        f"Message scheduled to be sent to {name}" 
+    ) 
+ 
+    print( 
+        f"Scheduled time: {schedule_datetime}" 
+    ) 
+ 
+    print( 
+        f"Waiting for {round(delay_seconds)} seconds..." 
+    ) 
+ 
+    print("============================================") 
+ 
+ 
+    # ======================================== 
+    # STEP 9: Wait Until Scheduled Time 
+    # ======================================== 
+ 
+    time.sleep(delay_seconds) 
+ 
+ 
+    # ======================================== 
+    # STEP 10: Send WhatsApp Message 
+    # ======================================== 
+ 
+    send_whatsapp_message( 
+        recipient_number, 
+        message_body 
+    )  
